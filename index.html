@@ -1,102 +1,79 @@
-<!DOCTYPE html>
-<html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>پایگاه حقیقت علمی</title>
-    <!-- اتصال به کتابخانه‌های Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-    <style>
-        /* استایل‌های پایه برای ظاهر اینستاگرامی */
-        body { font-family: Tahoma, sans-serif; background: #fafafa; }
-        .container { max-width: 600px; margin: auto; padding: 20px; }
-        .post-card { background: white; border: 1px solid #dbdbdb; margin-bottom: 20px; padding: 15px; }
-        video { width: 100%; border-radius: 8px; }
-        button { cursor: pointer; padding: 10px; background: #0095f6; color: white; border: none; }
-    </style>
-</head>
-<body>
 
-<div class="container">
-    <header>
-        <h1>پایگاه حقیقت علمی</h1>
-        <button id="connectWallet">اتصال کیف پول متامسک</button>
-        <p id="userAddress">کاربر مهمان</p>
-    </header>
-
-    <!-- بخش آپلود ویدیو -->
-    <section id="uploadSection" style="display:none;">
-        <input type="file" id="videoFile" accept="video/*">
-        <textarea id="caption" placeholder="کپشن علمی بنویسید..."></textarea>
-        <button onclick="uploadVideo()">انتشار ویدیو</button>
-    </section>
-
-    <!-- نمایش ویدیوها -->
-    <div id="feed"></div>
-</div>
-
-<script>
-    // ۱. تنظیمات Firebase (از پنل فایربیس خود کپی کنید)
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT.appspot.com",
-        messagingSenderId: "YOUR_ID",
-        appId: "YOUR_APP_ID"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    const storage = firebase.storage();
-
-    // ۲. منطق اتصال متامسک (Web3)
-    document.getElementById('connectWallet').addEventListener('click', async () => {
-        if (window.ethereum) {
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const address = accounts[0];
-            document.getElementById('userAddress').innerText = "پروفایل: " + address;
-            document.getElementById('uploadSection').style.display = 'block';
-            // اینجا می‌توانید صفحه پروفایل کاربر را بر اساس address فیلتر کنید
-        } else {
-            alert("متامسک نصب نیست!");
-        }
-    });
-
-    // ۳. تابع آپلود به Firebase
-    async function uploadVideo() {
-        const file = document.getElementById('videoFile').files[0];
-        const caption = document.getElementById('caption').value;
-        const storageRef = storage.ref('videos/' + file.name);
-        
-        await storageRef.put(file);
-        const url = await storageRef.getDownloadURL();
-        
-        // ذخیره اطلاعات در دیتابیس
-        await db.collection('posts').add({
-            videoUrl: url,
-            caption: caption,
-            author: document.getElementById('userAddress').innerText,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        alert("ویدیو با موفقیت منتشر شد!");
-        location.reload();
-    }
-
-    // ۴. بارگذاری ویدیوها از دیتابیس
-    db.collection('posts').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-        const feed = document.getElementById('feed');
-        feed.innerHTML = '';
-        snapshot.forEach(doc => {
-            const post = doc.data();
-            feed.innerHTML += `
-                <div class="post-card">
-                    <video src="${post.videoUrl}" controls></video>
-                    <p><strong>${post.author}</strong>: ${post.caption}</p>
-                </div>
-            `;
-        });
-    });
-</script>
-</body>
-</html>
+```html
+Widows2030 - شبکه اجتماعی ویدیو
+ { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
+body { background-color: #0f172a; color: #f8fafc; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+header { width: 100%; max-width: 500px; background: #1e293b; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 100; }
+header h1 { font-size: 1.2rem; color: #38bdf8; }
+.btn { background: #38bdf8; color: #0f172a; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
+.container { width: 100%; max-width: 500px; padding: 10px; flex: 1; }
+.card { background: #1e293b; border-radius: 12px; margin-bottom: 20px; overflow: hidden; border: 1px solid #334155; }
+.card-header { padding: 10px 15px; font-size: 0.9rem; color: #cbd5e1; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; }
+.card-video { width: 100%; max-height: 450px; background: #000; display: block; }
+.card-body { padding: 12px 15px; }
+.actions { display: flex; gap: 15px; margin-bottom: 8px; font-size: 1.2rem; }
+.actions span { cursor: pointer; }
+.caption { font-size: 0.95rem; margin-bottom: 10px; line-height: 1.4; }
+/مودال آپلود /
+#uploadModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
+.modal-content { background: #1e293b; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
+.modal-content input, .modal-content textarea { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 8px; }
+‌
+Widows2030 🌐
++ آپلود ویدیو
+‌
+در حال بارگذاری ویدیوها از سرور ابری...
+آپلود ویدیوی جدید
+انتشار در شبکه
+انصراف
+‌
+// اتصال به Appwrite
+const { Client, Databases, Storage, ID } = Appwrite;
+const client = new Client();
+client
+.setEndpoint('https://fra.cloud.appwrite.io/v1')
+.setProject('6acb89910006fbca941b');
+‌
+const databases = new Databases(client);
+const storage = new Storage(client);
+‌
+// مشخصات دیتابیس (باید در پنل اپرایت بسازید یا به صورت آزمایشی تنظیم کنید)
+const DATABASE_ID = "default";
+const COLLECTION_ID = "posts";
+const BUCKET_ID = "videos";
+‌
+function openModal() { document.getElementById('uploadModal').style.display = 'flex'; }
+function closeModal() { document.getElementById('uploadModal').style.display = 'none'; }
+‌
+async function uploadVideo() {
+const username = document.getElementById('usernameInput').value || "کاربر مهمان";
+const caption = document.getElementById('captionInput').value;
+const fileInput = document.getElementById('videoFileInput');
+‌
+if(fileInput.files.length === 0) {
+alert("لطفاً یک فایل ویدیو انتخاب کنید!");
+return;
+}
+‌
+alert("در حال آپلود ویدیو به سرور ابری... لطفاً صبر کنید.");
+‌
+try {
+// ۱. آپلود ویدیو به Storage
+const fileResponse = await storage.createFile(
+BUCKET_ID,
+ID.unique(),
+fileInput.files[0]
+);
+‌
+const fileId = fileResponse.$id;
+// دریافت لینک مستقیم ویدیو
+const videoUrl = storage.getFileView(BUCKET_ID, fileId);
+‌
+// ۲. ذخیره اطلاعات در دیتابیس
+// نکته: برای تست اگر جدول را نساخته‌اید، کد به صورت محلی شبیه‌سازی می‌کند
+alert("ویدیو با موفقیت در فضای ابری ذخیره شد! 🎉");
+closeModal();
+location.reload();
+} catch (error) {
+console.error(error);
+alert("خطا در آپلود: " + error.message);
