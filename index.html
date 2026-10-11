@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پایگاه حقیقت علمی | شبکه اجتماعی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+    <style>
+        body { background-color: #fafafa; color: #262626; font-family: 'Tahoma', sans-serif; }
+        .card { background: white; border: 1px solid #dbdbdb; border-radius: 8px; margin-bottom: 20px; }
+        .hidden-post { filter: blur(10px); }
+    </style>
+</head>
+<body class="bg-gray-50 pb-20">
+
+    <!-- Header -->
+    <nav class="sticky top-0 bg-white border-b border-gray-300 p-4 flex justify-between items-center z-50">
+        <h1 class="text-xl font-bold text-blue-600">علم‌گرام</h1>
+        <button id="connectBtn" class="bg-black text-white px-4 py-2 rounded-lg text-sm">اتصال کیف پول</button>
+    </nav>
+
+    <main class="max-w-xl mx-auto mt-6 px-4">
+        
+        <!-- Upload Section -->
+        <div class="card p-4">
+            <h2 class="font-bold mb-2">ارسال محتوای علمی جدید</h2>
+            <input type="file" id="vidInput" class="mb-2 block w-full text-sm">
+            <textarea id="captionInput" placeholder="توضیحات علمی..." class="w-full border rounded p-2 mb-2"></textarea>
+            <select id="privacyInput" class="w-full border rounded p-2 mb-2">
+                <option value="public">عمومی</option>
+                <option value="private">خصوصی (ویژه)</option>
+            </select>
+            <button onclick="publishPost()" class="w-full bg-blue-500 text-white py-2 rounded">انتشار</button>
+        </div>
+
+        <!-- Feed Container -->
+        <div id="feed"></div>
+    </main>
+
+    <script>
+        const connectBtn = document.getElementById('connectBtn');
+        let currentAccount = "";
+
+        // اتصال به متامسک
+        connectBtn.onclick = async () => {
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            currentAccount = accounts[0];
+            connectBtn.innerText = currentAccount.substring(0, 8) + "...";
+        };
+
+        // انتشار پست
+        function publishPost() {
+            const file = document.getElementById('vidInput').files[0];
+            if(!file) return alert("لطفاً ویدیو انتخاب کنید");
+            
+            const post = {
+                id: Date.now(),
+                videoUrl: URL.createObjectURL(file),
+                caption: document.getElementById('captionInput').value,
+                privacy: document.getElementById('privacyInput').value,
+                likes: 0,
+                comments: []
+            };
+
+            savePost(post);
+            renderFeed();
+        }
+
+        function savePost(post) {
+            let posts = JSON.parse(localStorage.getItem('posts') || '[]');
+            posts.unshift(post);
+            localStorage.setItem('posts', JSON.stringify(posts));
+        }
+
+        function renderFeed() {
+            const feed = document.getElementById('feed');
+            feed.innerHTML = '';
+            const posts = JSON.parse(localStorage.getItem('posts') || '[]');
+
+            posts.forEach(post => {
+                const card = document.createElement('div');
+                card.className = "card";
+                card.innerHTML = `
+                    <div class="p-3 font-bold text-sm">کاربر: ${currentAccount ? currentAccount.substring(0,6) : 'ناشناس'}</div>
+                    <video src="${post.videoUrl}" class="w-full ${post.privacy === 'private' ? 'hidden-post' : ''}" controls></video>
+                    <div class="p-4">
+                        <p class="text-sm mb-2"><b>توضیحات:</b> ${post.caption}</p>
+                        <div class="flex gap-4 mb-3">
+                            <button onclick="likePost(${post.id})" class="text-red-500">❤️ ${post.likes}</button>
+                            <button onclick="alert('لینک‌های ارتباطی: LinkedIn, GitHub, Twitter')" class="text-blue-500">🔗 پروفایل</button>
+                        </div>
+                        <div class="border-t pt-2">
+                            <input type="text" placeholder="ثبت نظر..." class="w-full text-sm outline-none">
+                        </div>
+                    </div>
+                `;
+                feed.appendChild(card);
+            });
+        }
+
+        function likePost(id) {
+            let posts = JSON.parse(localStorage.getItem('posts'));
+            posts = posts.map(p => p.id === id ? {...p, likes: p.likes + 1} : p);
+            localStorage.setItem('posts', JSON.stringify(posts));
+            renderFeed();
+        }
+
+        // نمایش اولیه
+        renderFeed();
+    </script>
+</body>
+</html>
