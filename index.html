@@ -1,79 +1,195 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پایگاه حقیقت علمی - ویدیو</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- لود کردن SDK اپ‌رایت -->
+    <script src="https://cdn.jsdelivr.net/npm/appwrite@14.0.0"></script>
+</head>
+<body>
+    <header>
+        <div class="logo">پایگاه حقیقت علمی</div>
+        <nav>
+            <button onclick="loadFeed()">خانه</button>
+            <button onclick="loadMyVideos()">پروفایل</button>
+        </nav>
+    </header>
 
-```html
-Widows2030 - شبکه اجتماعی ویدیو
- { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
-body { background-color: #0f172a; color: #f8fafc; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
-header { width: 100%; max-width: 500px; background: #1e293b; padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; position: sticky; top: 0; z-index: 100; }
-header h1 { font-size: 1.2rem; color: #38bdf8; }
-.btn { background: #38bdf8; color: #0f172a; border: none; padding: 8px 15px; border-radius: 20px; font-weight: bold; cursor: pointer; }
-.container { width: 100%; max-width: 500px; padding: 10px; flex: 1; }
-.card { background: #1e293b; border-radius: 12px; margin-bottom: 20px; overflow: hidden; border: 1px solid #334155; }
-.card-header { padding: 10px 15px; font-size: 0.9rem; color: #cbd5e1; border-bottom: 1px solid #334155; display: flex; justify-content: space-between; }
-.card-video { width: 100%; max-height: 450px; background: #000; display: block; }
-.card-body { padding: 12px 15px; }
-.actions { display: flex; gap: 15px; margin-bottom: 8px; font-size: 1.2rem; }
-.actions span { cursor: pointer; }
-.caption { font-size: 0.95rem; margin-bottom: 10px; line-height: 1.4; }
-/مودال آپلود /
-#uploadModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); justify-content: center; align-items: center; z-index: 1000; }
-.modal-content { background: #1e293b; padding: 20px; border-radius: 12px; width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
-.modal-content input, .modal-content textarea { width: 100%; padding: 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 8px; }
-‌
-Widows2030 🌐
-+ آپلود ویدیو
-‌
-در حال بارگذاری ویدیوها از سرور ابری...
-آپلود ویدیوی جدید
-انتشار در شبکه
-انصراف
-‌
-// اتصال به Appwrite
-const { Client, Databases, Storage, ID } = Appwrite;
-const client = new Client();
-client
-.setEndpoint('https://fra.cloud.appwrite.io/v1')
-.setProject('6acb89910006fbca941b');
-‌
+    <main id="feed" class="feed-container">
+        <!-- ویدیوها اینجا بارگذاری می‌شوند -->
+        <p style="text-align: center; margin-top: 50px;">در حال بارگذاری...</p>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
+/* استایل کلی */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #0f0f0f;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #1a1a1a;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid #333;
+}
+
+.logo { font-weight: bold; font-size: 1.2rem; }
+
+nav button {
+    background: #333;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+nav button:hover { background: #555; }
+
+/* نمایش کارت‌های ویدیو */
+.feed-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.video-card {
+    width: 100%;
+    max-width: 450px;
+    background: #1a1a1a;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+video {
+    width: 100%;
+    border-radius: 10px;
+    background: #000;
+}
+
+.caption { margin: 10px 0; font-size: 0.95rem; }
+
+.actions {
+    display: flex;
+    gap: 20px;
+    margin-top: 15px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+// تنظیمات اتصال به Appwrite
+const { Client, Databases, Storage, Query, Account } = Appwrite;
+
+const client = new Client()
+    .setEndpoint('https://cloud.appwrite.io/v1') // آدرس پیش‌فرض اپ‌رایت
+    .setProject('YOUR_PROJECT_ID'); // ID پروژه‌ی خود را اینجا بگذارید
+
 const databases = new Databases(client);
 const storage = new Storage(client);
-‌
-// مشخصات دیتابیس (باید در پنل اپرایت بسازید یا به صورت آزمایشی تنظیم کنید)
-const DATABASE_ID = "default";
-const COLLECTION_ID = "posts";
-const BUCKET_ID = "videos";
-‌
-function openModal() { document.getElementById('uploadModal').style.display = 'flex'; }
-function closeModal() { document.getElementById('uploadModal').style.display = 'none'; }
-‌
-async function uploadVideo() {
-const username = document.getElementById('usernameInput').value || "کاربر مهمان";
-const caption = document.getElementById('captionInput').value;
-const fileInput = document.getElementById('videoFileInput');
-‌
-if(fileInput.files.length === 0) {
-alert("لطفاً یک فایل ویدیو انتخاب کنید!");
-return;
+const account = new Account(client);
+
+// تنظیمات دیتابیس (این مقادیر را از پنل اپ‌رایت بردارید)
+const DB_ID = 'YOUR_DATABASE_ID';
+const COL_ID = 'YOUR_COLLECTION_ID';
+const BUCKET_ID = 'YOUR_BUCKET_ID';
+
+// ۱. خواندن و نمایش تمام ویدیوها
+async function loadFeed() {
+    const feed = document.getElementById('feed');
+    feed.innerHTML = '<p>در حال بارگذاری...</p>';
+    
+    try {
+        const response = await databases.listDocuments(DB_ID, COL_ID, [
+            Query.orderDesc('$createdAt')
+        ]);
+        renderVideos(response.documents);
+    } catch (error) {
+        console.error(error);
+        feed.innerHTML = '<p>خطا در دریافت ویدیوها. لطفاً دسترسی‌ها را چک کنید.</p>';
+    }
 }
-‌
-alert("در حال آپلود ویدیو به سرور ابری... لطفاً صبر کنید.");
-‌
-try {
-// ۱. آپلود ویدیو به Storage
-const fileResponse = await storage.createFile(
-BUCKET_ID,
-ID.unique(),
-fileInput.files[0]
-);
-‌
-const fileId = fileResponse.$id;
-// دریافت لینک مستقیم ویدیو
-const videoUrl = storage.getFileView(BUCKET_ID, fileId);
-‌
-// ۲. ذخیره اطلاعات در دیتابیس
-// نکته: برای تست اگر جدول را نساخته‌اید، کد به صورت محلی شبیه‌سازی می‌کند
-alert("ویدیو با موفقیت در فضای ابری ذخیره شد! 🎉");
-closeModal();
-location.reload();
-} catch (error) {
-console.error(error);
-alert("خطا در آپلود: " + error.message);
+
+// ۲. خواندن ویدیوهای فقط یک کاربر
+async function loadMyVideos() {
+    try {
+        const user = await account.get(); // گرفتن اطلاعات کاربر فعلی
+        const response = await databases.listDocuments(DB_ID, COL_ID, [
+            Query.equal('userId', user.$id)
+        ]);
+        renderVideos(response.documents);
+    } catch (error) {
+        alert('ابتدا باید وارد حساب کاربری خود شوید.');
+    }
+}
+
+// تابع رندر کردن کارت‌ها در HTML
+function renderVideos(documents) {
+    const feed = document.getElementById('feed');
+    feed.innerHTML = '';
+    
+    if (documents.length === 0) {
+        feed.innerHTML = '<p>ویدیویی یافت نشد.</p>';
+        return;
+    }
+
+    documents.forEach(video => {
+        const videoUrl = storage.getFileView(BUCKET_ID, video.fileId).href;
+        
+        feed.innerHTML += `
+            <div class="video-card">
+                <video src="${videoUrl}" controls></video>
+                <div class="caption">${video.caption || ''}</div>
+                <div class="actions">
+                    <button class="action-btn" onclick="likeVideo('${video.$id}', ${video.likes || 0})">
+                        ❤️ ${video.likes || 0}
+                    </button>
+                    <button class="action-btn" onclick="alert('بخش کامنت‌ها در حال راه‌اندازی است')">
+                        💬 نظر
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// ۳. تابع لایک کردن
+async function likeVideo(documentId, currentLikes) {
+    try {
+        await databases.updateDocument(DB_ID, COL_ID, documentId, {
+            likes: currentLikes + 1
+        });
+        loadFeed(); // رفرش لیست برای نمایش لایک جدید
+    } catch (error) {
+        alert('خطا در ثبت لایک');
+        console.error(error);
+    }
+}
+
+// اجرای اولیه هنگام باز شدن صفحه
+loadFeed();
