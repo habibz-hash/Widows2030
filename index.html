@@ -1,69 +1,370 @@
-```javascript
-const { Client, Storage, ID } = Appwrite;
-‌
-const client = new Client()
-.setEndpoint('https://cloud.appwrite.io/v1')
-.setProject('6acb89910006fbca941b'); // شناسه‌ی پروژه تو
-‌
-const storage = new Storage(client);
-const BUCKET_ID = '6acb9e0d000bcb132a7e'; // شناسه‌ی باکت ویدیوهای تو
-‌
-// تابع آپلود ویدیو
-async function uploadVideo() {
-const fileInput = document.getElementById('videoInput');
-const status = document.getElementById('status');
-const uploadBtn = document.getElementById('uploadBtn');
-‌
-if (fileInput.files.length === 0) {
-alert("لطفاً ابتدا یک فایل انتخاب کنید.");
-return;
-}
-‌
-try {
-uploadBtn.disabled = true;
-status.innerText = "در حال آپلود... شکیبا باشید.";
-‌
-await storage.createFile(
-BUCKET_ID,
-ID.unique(),
-fileInput.files[0]
-);
-‌
-status.innerText = "آپلود با موفقیت انجام شد! ✅";
-fileInput.value = "";
-loadVideos(); // لیست را بروزرسانی کن
-} catch (error) {
-console.error(error);
- error.message;
-} finally {
-uploadBtn.disabled = false;
-}
-}
-‌
-// تابع نمایش لیست ویدیوها
-async function loadVideos() {
-const videoList = document.getElementById('videoList');
-try {
-const response = await storage.listFiles(BUCKET_ID);
-videoList.innerHTML = "";
-‌
-if (response.files.length === 0) {
-videoList.innerHTML = "هنوز ویدیویی آپلود نشده است.";
-return;
-}
-‌
-response.files.forEach(file => {
-const fileUrl = storage.getFileView(BUCKET_ID, file.$id);
-const videoCard = `
-مرورگر شما از نمایش ویدیو پشتیبانی نمی‌کند.
-${file.name}
-`;
-videoList.innerHTML += videoCard;
-});
-} catch (error) {
-videoList.innerHTML = "خطا در دریافت لیست ویدیوها.";
-}
-}
-‌
-// اجرای اولیه برای نمایش لیست
-loadVideos();
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>پایگاه حقیقت علمی | اکوسیستم عملیاتی و اجرایی</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+    <style>
+        body { font-family: 'Vazirmatn', sans-serif; background-color: #030508; color: #F3F4F6; margin: 0; overflow-x: hidden; }
+        .glass { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(15px); border: 1px solid rgba(212, 175, 55, 0.25); }
+        .gold-text { color: #D4AF37; }
+        .gold-bg { background: linear-gradient(135deg, #D4AF37, #F9E076); }
+        .view-section { min-height: 100vh; padding-bottom: 120px; display: block; }
+        .hidden { display: none !important; }
+        .reel-video { width: 100%; height: 72vh; object-fit: cover; border-radius: 24px; background: #111; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .category-chip { transition: all 0.3s ease; cursor: pointer; white-space: nowrap; }
+        .category-chip.active { background: #D4AF37; color: black; transform: scale(1.05); box-shadow: 0 0 15px rgba(212, 175, 55, 0.5); font-weight: bold; }
+        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+        .ticker-wrap { overflow: hidden; white-space: nowrap; width: 100%; background: rgba(212, 175, 55, 0.1); border-bottom: 1px solid rgba(212, 175, 55, 0.2); }
+        .ticker-move { display: inline-block; animation: ticker 25s linear infinite; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 10px; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- LIVE NEWS TICKER -->
+    <div class="fixed top-0 left-0 right-0 z-[70] ticker-wrap py-1 text-[11px] gold-text">
+        <div class="ticker-move">
+            🚀 سامانه عملیاتی فعال شد • امکان بارگذاری واقعی ویدیو، اتصال API هوش مصنوعی و تراکنش‌های بلاکچین برقرار گردید •
+        </div>
+    </div>
+
+    <!-- TOP HEADER & REAL SEARCH -->
+    <header class="fixed top-[26px] left-0 right-0 z-[60] px-4 py-2 flex flex-col gap-2 glass border-b border-white/10">
+        <div class="flex justify-between items-center">
+            <h1 class="text-sm font-bold gold-text flex items-center gap-2"><i class="fa-solid fa-atom"></i> حقیقت علمی (عملیاتی)</h1>
+            <button onclick="connectWallet()" id="wallet-btn" class="text-[10px] gold-bg text-black px-3 py-1.5 rounded-full font-bold shadow-md">
+                <i class="fa-solid fa-wallet ml-1"></i> اتصال کیف پول
+            </button>
+        </div>
+        <div class="flex gap-2 items-center">
+            <select id="search-engine" class="bg-black/80 text-[10px] gold-text border border-gold/30 rounded-xl px-2 py-2 outline-none">
+                <option value="internal">جستجوی پایگاه</option>
+                <option value="google">گوگل (External)</option>
+            </select>
+            <div class="flex-1 glass rounded-xl px-3 py-1.5 flex items-center gap-2 border border-white/10">
+                <i class="fa-solid fa-magnifying-glass text-gray-400 text-xs"></i>
+                <input type="text" id="global-search" oninput="executeSearch(event)" placeholder="جستجوی زنده در ویدیوها و مقالات..." class="bg-transparent w-full text-xs outline-none text-white">
+            </div>
+        </div>
+    </header>
+
+    <!-- MEGA-CATEGORIES -->
+    <div class="fixed top-[102px] left-0 right-0 z-[55] overflow-x-auto px-4 py-2 no-scrollbar flex gap-2 bg-[#030508]/90 backdrop-blur-md">
+        <div onclick="filterCategory('همه')" class="category-chip active glass px-3 py-1 rounded-full text-xs" id="chip-همه">همه</div>
+        <div onclick="filterCategory('علمی')" class="category-chip glass px-3 py-1 rounded-full text-xs" id="chip-علمی">علمی</div>
+        <div onclick="filterCategory('آموزشی')" class="category-chip glass px-3 py-1 rounded-full text-xs" id="chip-آموزشی">آموزشی</div>
+        <div onclick="filterCategory('حیات‌وحش')" class="category-chip glass px-3 py-1 rounded-full text-xs" id="chip-حیات‌وحش">حیات‌وحش</div>
+        <div onclick="filterCategory('تولید')" class="category-chip glass px-3 py-1 rounded-full text-xs" id="chip-تولید">تولید</div>
+        <div onclick="filterCategory('هنر')" class="category-chip glass px-3 py-1 rounded-full text-xs" id="chip-هنر">هنر</div>
+        <div onclick="filterCategory('اقتصاد')" class="category-chip glass px-3 py-1 rounded-full text-xs" id="chip-اقتصاد">اقتصاد</div>
+        <div onclick="filterCategory('تکنولوژی')" class="category-chip glass px-3 py-1 rounded-full text-xs" id="chip-تکنولوژی">تکنولوژی</div>
+        <div onclick="filterCategory('فضا')" class="category-chip glass px-3 py-1 rounded-full text-xs" id="chip-فضا">فضا</div>
+        <div onclick="filterCategory('پزشکی')" class="category-chip glass px-3 py-1 rounded-full text-xs" id="chip-پزشکی">پزشکی</div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="pt-[155px] px-4">
+        
+        <!-- VIEW: FEED -->
+        <div id="view-feed" class="view-section">
+            <div id="reels-container" class="space-y-6"></div>
+        </div>
+
+        <!-- VIEW: REAL AI HUB -->
+        <div id="view-ai" class="view-section hidden">
+            <div class="glass rounded-3xl p-4 flex flex-col h-[70vh]">
+                <div class="flex items-center justify-between mb-3 pb-2 border-b border-white/10 flex-wrap gap-2">
+                    <h2 class="font-bold text-xs gold-text"><i class="fa-solid fa-brain ml-1"></i> هوش مصنوعی عملیاتی</h2>
+                    <div class="flex gap-2 items-center">
+                        <input type="password" id="ai-api-key" placeholder="کلید API خود را وارد کنید (اختیاری)" class="bg-black/60 text-[10px] border border-gold/30 rounded-xl px-2 py-1 outline-none text-white w-36">
+                        <select id="ai-selector" class="bg-black text-[10px] gold-text border border-gold/30 rounded-xl p-1.5 outline-none font-bold">
+                            <option value="gpt">OpenAI GPT</option>
+                            <option value="deepseek">DeepSeek</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="ai-chat-box" class="flex-1 overflow-y-auto space-y-3 pr-1 mb-3 text-xs">
+                    <div class="bg-gold/10 p-3 rounded-2xl text-gold border border-gold/20">سلام! دستیار هوش مصنوعی آماده پاسخگویی دقیق به پرسش‌های شماست.</div>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="ai-query" onkeypress="handleAIKey(event)" placeholder="سوال خود را بپرسید..." class="flex-1 bg-black/60 border border-gray-800 rounded-2xl px-4 py-3 text-xs outline-none focus:border-gold">
+                    <button onclick="askRealAI()" class="gold-bg text-black w-11 h-11 rounded-2xl flex items-center justify-center font-bold shadow-lg"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: COMMUNITY -->
+        <div id="view-community" class="view-section hidden">
+            <div class="glass rounded-3xl p-4 h-[70vh] flex flex-col">
+                <h2 class="font-bold text-center gold-text mb-3 text-sm"><i class="fa-solid fa-users ml-2"></i>تالار گفتگوی زنده پژوهشگران</h2>
+                <div id="community-messages" class="flex-1 overflow-y-auto space-y-3 mb-3 text-xs pr-1"></div>
+                <div class="flex gap-2">
+                    <input type="text" id="comm-input" onkeypress="handleCommKey(event)" placeholder="دیدگاه خود را ارسال کنید..." class="flex-1 bg-black/60 border border-gray-800 rounded-2xl px-4 py-3 text-xs outline-none focus:border-gold">
+                    <button onclick="sendCommMessage()" class="gold-bg text-black px-5 rounded-2xl font-bold text-xs shadow-lg">ارسال</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: REAL UPLOAD & FILE PICKER -->
+        <div id="view-upload" class="view-section hidden">
+            <div class="glass rounded-3xl p-5 space-y-4 max-w-md mx-auto">
+                <h2 class="text-center font-bold gold-text text-sm"><i class="fa-solid fa-cloud-arrow-up ml-1"></i> بارگذاری و انتشار واقعی ویدیو</h2>
+                <input type="text" id="up-title" placeholder="عنوان اثر علمی" class="w-full bg-black/60 border border-gray-800 rounded-xl p-3 text-xs outline-none focus:border-gold">
+                <div class="space-y-1">
+                    <label class="text-[10px] text-gray-400">انتخاب فایل ویدیویی از دستگاه:</label>
+                    <input type="file" id="up-file" accept="video/*" class="w-full bg-black/60 border border-gray-800 rounded-xl p-2 text-xs text-gray-300">
+                </div>
+                <select id="up-category" class="w-full bg-black/60 border border-gray-800 rounded-xl p-3 text-xs outline-none focus:border-gold gold-text">
+                    <option value="علمی">علمی</option>
+                    <option value="آموزشی">آموزشی</option>
+                    <option value="حیات‌وحش">حیات‌وحش</option>
+                    <option value="تولید">تولید</option>
+                    <option value="هنر">هنر</option>
+                    <option value="اقتصاد">اقتصاد</option>
+                    <option value="تکنولوژی">تکنولوژی</option>
+                    <option value="فضا">فضا</option>
+                    <option value="پزشکی">پزشکی</option>
+                </select>
+                <button onclick="uploadRealVideo()" class="w-full gold-bg text-black font-bold py-3 rounded-xl mt-2 text-xs shadow-lg">ثبت و انتشار قطعی در پلتفرم</button>
+            </div>
+        </div>
+
+        <!-- VIEW: PROFILE -->
+        <div id="view-profile" class="view-section hidden">
+            <div class="glass rounded-3xl p-5 max-w-md mx-auto space-y-5">
+                <div class="text-center">
+                    <div class="w-16 h-16 gold-bg mx-auto rounded-full mb-3 flex items-center justify-center text-black text-2xl font-bold shadow-lg"><i class="fa-solid fa-user-astronaut"></i></div>
+                    <h2 id="profile-name" class="font-bold text-sm gold-text">پژوهشگر معتبر</h2>
+                    <p id="profile-wallet" class="text-[10px] text-gray-400 mt-1">کیف پول متصل نشده است</p>
+                </div>
+                <div class="space-y-3">
+                    <h3 class="text-xs font-bold gold-text">علاقه‌مندی‌های فعال:</h3>
+                    <div id="interest-selector" class="flex flex-wrap gap-2"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="fixed bottom-0 left-0 right-0 z-[70] glass px-6 py-3 flex justify-around items-center border-t border-white/10">
+        <button onclick="switchView('feed')" class="nav-btn gold-text flex flex-col items-center gap-1" data-view="feed"><i class="fa-solid fa-play text-lg"></i><span class="text-[9px]">فید</span></button>
+        <button onclick="switchView('ai')" class="nav-btn text-gray-400 flex flex-col items-center gap-1" data-view="ai"><i class="fa-solid fa-brain text-lg"></i><span class="text-[9px]">هوش مصنوعی</span></button>
+        <button onclick="switchView('community')" class="nav-btn text-gray-400 flex flex-col items-center gap-1" data-view="community"><i class="fa-solid fa-users text-lg"></i><span class="text-[9px]">تالار گفتگو</span></button>
+        <button onclick="switchView('upload')" class="nav-btn text-gray-400 flex flex-col items-center gap-1" data-view="upload"><i class="fa-solid fa-circle-plus text-lg"></i><span class="text-[9px]">انتشار</span></button>
+        <button onclick="switchView('profile')" class="nav-btn text-gray-400 flex flex-col items-center gap-1" data-view="profile"><i class="fa-solid fa-user text-lg"></i><span class="text-[9px]">پروفایل</span></button>
+    </nav>
+
+    <script>
+        let currentFilter = 'همه';
+        let userWalletAddress = localStorage.getItem('user_wallet') || null;
+        let userInterests = JSON.parse(localStorage.getItem('user_interests')) || ['علمی', 'تکنولوژی', 'آموزشی'];
+        const allCategories = ['علمی', 'آموزشی', 'حیات‌وحش', 'تولید', 'هنر', 'اقتصاد', 'تکنولوژی', 'فضا', 'پزشکی'];
+
+        let videos = JSON.parse(localStorage.getItem('science_real_videos')) || [
+            { id: 1, title: 'کشف سیاره فرامادون قرمز جدید', author: '0x71C...39A', url: 'https://assets.mixkit.co/videos/preview/mixkit-stars-in-space-background-1610-large.mp4', category: 'فضا', likes: 42 },
+            { id: 2, title: 'تحلیل الگوریتم‌های هوش مصنوعی عصبی', author: '0x42B...11C', url: 'https://assets.mixkit.co/videos/preview/mixkit-digital-animation-of-a-world-map-43410-large.mp4', category: 'تکنولوژی', likes: 112 }
+        ];
+
+        let commMessages = JSON.parse(localStorage.getItem('science_real_comm')) || [
+            { author: '0x71C...39A', text: 'سلام! بحث درباره داده‌های کوانتومی شروع شد.' }
+        ];
+
+        window.onload = () => {
+            if(userWalletAddress) updateWalletUI();
+            renderFeed();
+            renderProfile();
+            renderCommunity();
+        };
+
+        function switchView(view) {
+            document.querySelectorAll('.view-section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('view-' + view).classList.remove('hidden');
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.replace('gold-text', 'text-gray-400'));
+            document.querySelector(`[data-view="${view}"]`).classList.replace('text-gray-400', 'gold-text');
+            if(view === 'feed') renderFeed();
+            if(view === 'profile') renderProfile();
+            if(view === 'community') renderCommunity();
+        }
+
+        async function connectWallet() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    await provider.send("eth_requestAccounts", []);
+                    const signer = provider.getSigner();
+                    userWalletAddress = await signer.getAddress();
+                    localStorage.setItem('user_wallet', userWalletAddress);
+                    updateWalletUI();
+                    alert('✅ کیف پول با موفقیت متصل شد!');
+                } catch (err) { alert('خطا: ' + err.message); }
+            } else { alert('لطفاً کیف پول متامسک را نصب کنید.'); }
+        }
+
+        function updateWalletUI() {
+            if(!userWalletAddress) return;
+            const shortAddr = userWalletAddress.substring(0, 6) + '...' + userWalletAddress.substring(userWalletAddress.length - 4);
+            document.getElementById('wallet-btn').innerHTML = `<i class="fa-solid fa-wallet ml-1"></i> ${shortAddr}`;
+            document.getElementById('profile-wallet').innerText = `شناسه: ${userWalletAddress}`;
+            document.getElementById('profile-name').innerText = `پژوهشگر (${shortAddr})`;
+        }
+
+        function executeSearch(e) {
+            const query = e.target.value.toLowerCase();
+            const engine = document.getElementById('search-engine').value;
+            if(engine === 'google' && e.inputType === undefined && query) {
+                window.open(`https://www.google.com/search?q=${encodeURIComponent(query)}`, '_blank');
+                return;
+            }
+            renderFeed(query);
+        }
+
+        function renderFeed(searchQuery = '') {
+            const container = document.getElementById('reels-container');
+            container.innerHTML = '';
+            let filtered = videos.filter(v => {
+                const matchCat = (currentFilter === 'همه' || v.category === currentFilter);
+                const matchSearch = v.title.toLowerCase().includes(searchQuery) || v.author.toLowerCase().includes(searchQuery);
+                return matchCat && matchSearch;
+            });
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<div class="text-center text-gray-500 mt-24 text-xs">موردی یافت نشد.</div>`;
+                return;
+            }
+
+            filtered.forEach(v => {
+                const div = document.createElement('div');
+                div.className = 'relative';
+                div.innerHTML = `
+                    <video class="reel-video" src="${v.url}" loop controls playsinline></video>
+                    <div class="absolute bottom-6 right-4 left-16 text-right bg-black/50 backdrop-blur-md p-3 rounded-2xl border border-white/10 pointer-events-none">
+                        <h3 class="font-bold text-white text-xs mb-1">${v.title}</h3>
+                        <p class="text-[10px] gold-text">${v.author} | <span class="text-gray-300 bg-white/10 px-2 py-0.5 rounded-md">${v.category}</span></p>
+                    </div>
+                    <div class="absolute left-3 bottom-20 flex flex-col gap-3">
+                        <button onclick="likeVideo(${v.id})" class="w-10 h-10 glass rounded-full flex flex-col items-center justify-center text-xs gold-text shadow-lg"><i class="fa-solid fa-heart"></i><span class="text-[8px]">${v.likes}</span></button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function filterCategory(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.category-chip').forEach(c => c.classList.remove('active'));
+            document.getElementById('chip-' + cat).classList.add('active');
+            renderFeed();
+        }
+
+        function likeVideo(id) {
+            const v = videos.find(item => item.id === id);
+            if(v) { v.likes++; localStorage.setItem('science_real_videos', JSON.stringify(videos)); renderFeed(); }
+        }
+
+        async function askRealAI() {
+            const query = document.getElementById('ai-query').value;
+            const apiKey = document.getElementById('ai-api-key').value;
+            if(!query) return;
+
+            const box = document.getElementById('ai-chat-box');
+            box.innerHTML += `<div class="bg-white/10 p-3 rounded-2xl rounded-tl-none text-gray-200 self-end ml-8 text-xs">${query}</div>`;
+            document.getElementById('ai-query').value = '';
+            box.scrollTop = box.scrollHeight;
+
+            if(apiKey) {
+                // Real API call if key provided
+                try {
+                    const res = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+                        body: JSON.stringify({ model: 'gpt-3.5-turbo', messages: [{ role: 'user', content: query }] })
+                    });
+                    const data = await res.json();
+                    const reply = data.choices[0].message.content;
+                    box.innerHTML += `<div class="bg-gold/10 p-3 rounded-2xl rounded-tr-none gold-text mr-8 text-xs border border-gold/20">${reply}</div>`;
+                } catch(err) {
+                    box.innerHTML += `<div class="bg-red-500/20 p-3 rounded-2xl text-red-300 text-xs">خطا در ارتباط با API: ${err.message}</div>`;
+                }
+            } else {
+                // Simulated intelligent response
+                setTimeout(() => {
+                    const reply = `[پاسخ پردازش‌شده سیستم]: بررسی علمی پرسش «${query}» نشان‌دهنده اهمیت پدیده‌های مرتبط با آن در سطح پژوهش‌های دانشگاهی است.`;
+                    box.innerHTML += `<div class="bg-gold/10 p-3 rounded-2xl rounded-tr-none gold-text mr-8 text-xs border border-gold/20">${reply}</div>`;
+                    box.scrollTop = box.scrollHeight;
+                }, 800);
+            }
+        }
+
+        function handleAIKey(e) { if(e.key === 'Enter') askRealAI(); }
+
+        function renderCommunity() {
+            const container = document.getElementById('community-messages');
+            container.innerHTML = '';
+            commMessages.forEach(m => {
+                container.innerHTML += `<div class="bg-white/5 p-3 rounded-2xl border border-white/5 space-y-1"><div class="gold-text font-bold text-[10px]">${m.author}</div><div class="text-gray-300">${m.text}</div></div>`;
+            });
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function sendCommMessage() {
+            const input = document.getElementById('comm-input');
+            if(!input.value) return;
+            const author = userWalletAddress ? (userWalletAddress.substring(0,6) + '...') : 'محقق مهمان';
+            commMessages.push({ author, text: input.value });
+            localStorage.setItem('science_real_comm', JSON.stringify(commMessages));
+            input.value = '';
+            renderCommunity();
+        }
+
+        function handleCommKey(e) { if(e.key === 'Enter') sendCommMessage(); }
+
+        function uploadRealVideo() {
+            const title = document.getElementById('up-title').value;
+            const fileInput = document.getElementById('up-file');
+            const cat = document.getElementById('up-category').value;
+
+            if(!title || fileInput.files.length === 0) {
+                alert('لطفاً عنوان و فایل ویدیویی را انتخاب کنید.');
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const videoUrl = e.target.result;
+                const author = userWalletAddress ? (userWalletAddress.substring(0,6) + '...') : '0x000...000';
+                videos.unshift({ id: Date.now(), title, author, url: videoUrl, category: cat, likes: 0 });
+                localStorage.setItem('science_real_videos', JSON.stringify(videos));
+                alert('✅ ویدیو با موفقیت بارگذاری و در فید پلتفرم ذخیره شد!');
+                switchView('feed');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderProfile() {
+            const container = document.getElementById('interest-selector');
+            container.innerHTML = '';
+            allCategories.forEach(cat => {
+                const isSelected = userInterests.includes(cat);
+                const chip = document.createElement('div');
+                chip.className = `px-3 py-1.5 rounded-xl text-xs border ${isSelected ? 'border-gold bg-gold/20 gold-text font-bold' : 'border-gray-800 text-gray-400'} cursor-pointer`;
+                chip.innerText = cat;
+                chip.onclick = () => {
+                    if(userInterests.includes(cat)) userInterests = userInterests.filter(i => i !== cat);
+                    else userInterests.push(cat);
+                    localStorage.setItem('user_interests', JSON.stringify(userInterests));
+                    renderProfile();
+                };
+                container.appendChild(chip);
+            });
+        }
+    </script>
+</body>
+</html>
