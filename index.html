@@ -1,42 +1,204 @@
-```html
-پایگاه حقیقت علمی | Windows2030
-body {
-font-family: 'Vazirmatn', sans-serif;
-background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1a 100%);
-color: white;
-min-height: 100vh;
-overflow-x: hidden;
-}
-.glass-card {
-background: rgba(255, 255, 255, 0.05);
-backdrop-filter: blur(10px);
-border: 1px solid rgba(255, 255, 255, 0.1);
-transition: all 0.3s ease;
-}
-.glass-card:hover {
-transform: translateY(-10px);
-background: rgba(255, 255, 255, 0.1);
-border-color: #4f46e5;
-box-shadow: 0 0 20px rgba(79, 70, 229, 0.4);
-}
-.glow-text {
-text-shadow: 0 0 10px rgba(255, 255, 255, 0.5), 0 0 20px rgba(79, 70, 229, 0.8);
-}
-nst connectBtn = document.getElementById('connectWallet');
-const walletText = document.getElementById('walletAddress');
-async function connect() {
-if (typeof window.ethereum !== 'undefined') {
-try {
-const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
-const account = accounts[0];
-walletText.innerText = "متصل شد: " + account;
-connectBtn.innerHTML = "متصل شده ✅";
-connectBtn.classList.replace('bg-indigo-600', 'bg-green-600');
-} catch (error) {
-alert("خطا در اتصال به متاماسک");
-}
-} else {
-alert("لطفاً افزونه متاماسک را نصب کنید");
-}
-}
-connectBtn.addEventListener('click', connect);
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پایگاه حقیقت علمی | پورتال جامع</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Vazirmatn Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Vazirmatn', sans-serif;
+            background-color: #030712;
+            color: #f3f4f6;
+            min-height: 100vh;
+        }
+        .glass {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(17, 24, 39, 0.5);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(59, 130, 246, 0.4);
+            box-shadow: 0 12px 30px -10px rgba(59, 130, 246, 0.15);
+        }
+        /* اسکرول‌بار سفارشی */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #030712; }
+        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-[#030712] flex flex-col items-center justify-between p-4 sm:p-6 md:p-8">
+
+    <!-- هدر سایت (Header) -->
+    <header class="w-full max-w-5xl flex flex-col sm:flex-row justify-between items-center glass p-4 sm:p-6 rounded-2xl mb-8 gap-4 shadow-2xl">
+        <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-400 text-xl border border-blue-500/20 shadow-inner">
+                <i class="fa-solid fa-atom animate-spin" style="animation-duration: 20s;"></i>
+            </div>
+            <div>
+                <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
+                    پایگاه حقیقت علمی
+                </h1>
+                <p class="text-xs text-gray-400">پورتال رسمی ارتباطات و خدمات</p>
+            </div>
+        </div>
+
+        <!-- دکمه اتصال واقعی به متاماسک -->
+        <button id="connectWalletBtn" onclick="connectMetaMask()" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-medium px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20 active:scale-95">
+            <i class="fa-solid fa-wallet"></i>
+            <span id="walletButtonText">اتصال به متاماسک</span>
+        </button>
+    </header>
+
+    <!-- بخش اصلی کارت‌ها (Grid Content) -->
+    <main class="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+
+        <!-- کارت ۱: تلگرام -->
+        <a href="https://t.me/+3zLEkISgqAM0ODRk" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+            <div>
+                <div class="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-sky-500/20 transition-all border border-sky-500/10">
+                    <i class="fa-brands fa-telegram"></i>
+                </div>
+                <h3 class="text-base font-bold mb-2 group-hover:text-sky-400 transition-colors">کانال تلگرام</h3>
+                <p class="text-xs text-gray-400 leading-relaxed">آخرین اخبار، مقالات تخصصی و اطلاعیه‌های رسمی پایگاه را در کانال تلگرام دنبال کنید.</p>
+            </div>
+            <div class="mt-6 flex items-center gap-2 text-xs text-sky-400 font-medium">
+                <span>ورود به کانال</span>
+                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
+            </div>
+        </a>
+
+        <!-- کارت ۲: اینستاگرام -->
+        <a href="https://www.instagram.com/habib_zirak" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+            <div>
+                <div class="w-12 h-12 rounded-xl bg-pink-500/10 text-pink-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-pink-500/20 transition-all border border-pink-500/10">
+                    <i class="fa-brands fa-instagram"></i>
+                </div>
+                <h3 class="text-base font-bold mb-2 group-hover:text-pink-400 transition-colors">صفحه اینستاگرام</h3>
+                <p class="text-xs text-gray-400 leading-relaxed">ویدیوهای کوتاه علمی، ریلزها و تصاویر اینفوگرافیک را در صفحه اینستاگرام مشاهده کنید.</p>
+            </div>
+            <div class="mt-6 flex items-center gap-2 text-xs text-pink-400 font-medium">
+                <span>مشاهده پروفایل</span>
+                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
+            </div>
+        </a>
+
+        <!-- کارت ۳: بله -->
+        <a href="https://ble.ir/habib_zirak" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+            <div>
+                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all border border-emerald-500/10">
+                    <i class="fa-solid fa-comments"></i>
+                </div>
+                <h3 class="text-base font-bold mb-2 group-hover:text-emerald-400 transition-colors">پیام‌رسان بله</h3>
+                <p class="text-xs text-gray-400 leading-relaxed">ارتباط مستقیم، دریافت فایل‌های پژوهشی و گفتگو از طریق کانال پیام‌رسان بله.</p>
+            </div>
+            <div class="mt-6 flex items-center gap-2 text-xs text-emerald-400 font-medium">
+                <span>عضویت در بله</span>
+                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
+            </div>
+        </a>
+
+        <!-- کارت ۴: درگاه پرداخت (Placeholder) -->
+        <a href="#" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+            <div>
+                <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-amber-500/20 transition-all border border-amber-500/10">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                </div>
+                <h3 class="text-base font-bold mb-2 group-hover:text-amber-400 transition-colors">حمایت مالی</h3>
+                <p class="text-xs text-gray-400 leading-relaxed">کمک به توسعه زیرساخت‌های پژوهشی، ارتقای سرورها و استمرار تولید محتوای علمی.</p>
+            </div>
+            <div class="mt-6 flex items-center gap-2 text-xs text-amber-400 font-medium">
+                <span>حمایت از پروژه</span>
+                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
+            </div>
+        </a>
+
+        <!-- کارت ۵: درباره ما (Placeholder) -->
+        <a href="#" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+            <div>
+                <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all border border-purple-500/10">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+                <h3 class="text-base font-bold mb-2 group-hover:text-purple-400 transition-colors">درباره پایگاه</h3>
+                <p class="text-xs text-gray-400 leading-relaxed">آشنایی با اهداف، مأموریت‌ها و تیم پژوهشی پایگاه حقیقت علمی در انتشار دانش شفاف.</p>
+            </div>
+            <div class="mt-6 flex items-center gap-2 text-xs text-purple-400 font-medium">
+                <span>مطالعه بیشتر</span>
+                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
+            </div>
+        </a>
+
+        <!-- کارت ۶: ارتباط با ما (Placeholder) -->
+        <a href="#" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
+            <div>
+                <div class="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-rose-500/20 transition-all border border-rose-500/10">
+                    <i class="fa-solid fa-headset"></i>
+                </div>
+                <h3 class="text-base font-bold mb-2 group-hover:text-rose-400 transition-colors">ارتباط با ما</h3>
+                <p class="text-xs text-gray-400 leading-relaxed">ارسال پیشنهادات، انتقادات، پرسش‌های علمی یا درخواست‌های همکاری از طریق راه‌های ارتباطی.</p>
+            </div>
+            <div class="mt-6 flex items-center gap-2 text-xs text-rose-400 font-medium">
+                <span>ارسال پیام</span>
+                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
+            </div>
+        </a>
+
+    </main>
+
+    <!-- فوتر پایین صفحه -->
+    <footer class="w-full max-w-5xl text-center py-4 border-t border-white/5 text-gray-500 text-xs">
+        <p>© ۲۰۳۰ پایگاه حقیقت علمی. تمامی حقوق محفوظ است. میزبانی شده روی GitHub Pages.</p>
+    </footer>
+
+    <!-- کدهای جاوااسکریپت اتصال به متاماسک -->
+    <script>
+        async function connectMetaMask() {
+            const btnText = document.getElementById('walletButtonText');
+            const btn = document.getElementById('connectWalletBtn');
+            
+            // بررسی وجود افزونه متاماسک یا ولت سازگار در مرورگر
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    btnText.innerText = "در حال اتصال...";
+                    
+                    // درخواست دسترسی به حساب‌های کاربری کیف پول
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const account = accounts[0];
+                    
+                    // کوتاه کردن آدرس کیف پول برای نمایش (مثلاً 0x1234...5678)
+                    const shortAddress = account.substring(0, 6) + '...' + account.substring(account.length - 4);
+                    
+                    // نمایش آدرس روی دکمه و تغییر رنگ به سبز موفقیت‌آمیز
+                    btnText.innerText = shortAddress;
+                    btn.classList.remove('from-blue-600', 'to-indigo-600', 'shadow-blue-600/20');
+                    btn.classList.add('from-emerald-600', 'to-teal-600', 'shadow-emerald-600/20');
+                    
+                    console.log("Wallet Connected Successfully:", account);
+                } catch (error) {
+                    console.error("Connection rejected by user:", error);
+                    btnText.innerText = "اتصال به متاماسک";
+                }
+            } else {
+                alert("افزونه کیف پول متاماسک روی مرورگر شما نصب نشده است. لطفاً ابتدا آن را نصب کنید.");
+                btnText.innerText = "متاماسک یافت نشد";
+            }
+        }
+    </script>
+</body>
+</html>
