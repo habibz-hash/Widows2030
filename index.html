@@ -3,202 +3,490 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>پایگاه حقیقت علمی | پورتال جامع</title>
+    <title>پایگاه حقیقت علمی | Archive Pro</title>
     
-    <!-- Tailwind CSS CDN -->
+    <!-- Tailwind CSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome 6 Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Vazirmatn Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts: Vazirmatn (For perfect Persian Typography) -->
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Ethers.js for Web3 -->
+    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js" type="application/javascript"></script>
 
     <style>
         body {
             font-family: 'Vazirmatn', sans-serif;
-            background-color: #030712;
-            color: #f3f4f6;
-            min-height: 100vh;
+            background-color: #0f172a; /* Deep Dark Background */
+            color: #f8fafc;
+            overflow-x: hidden;
         }
-        .glass {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .glass-card {
-            background: rgba(17, 24, 39, 0.5);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .glass-card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(59, 130, 246, 0.4);
-            box-shadow: 0 12px 30px -10px rgba(59, 130, 246, 0.15);
-        }
-        /* اسکرول‌بار سفارشی */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
+        /* Placeholder for Advanced CSS - To be filled in Step 2 */
     </style>
 </head>
-<body class="bg-[#030712] flex flex-col items-center justify-between p-4 sm:p-6 md:p-8">
+<body class="bg-slate-950 text-slate-50">
 
-    <!-- هدر سایت (Header) -->
-    <header class="w-full max-w-5xl flex flex-col sm:flex-row justify-between items-center glass p-4 sm:p-6 rounded-2xl mb-8 gap-4 shadow-2xl">
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-blue-600/20 flex items-center justify-center text-blue-400 text-xl border border-blue-500/20 shadow-inner">
-                <i class="fa-solid fa-atom animate-spin" style="animation-duration: 20s;"></i>
-            </div>
-            <div>
-                <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-blue-400 via-indigo-300 to-purple-400 bg-clip-text text-transparent">
-                    پایگاه حقیقت علمی
-                </h1>
-                <p class="text-xs text-gray-400">پورتال رسمی ارتباطات و خدمات</p>
-            </div>
+    <!-- Main App Container -->
+    <div id="app" class="min-h-screen flex flex-col">
+        
+        <!-- 1. NAVIGATION BAR (Will be styled in Step 2) -->
+        <nav id="navbar" class="fixed top-0 w-full z-50 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
+            <!-- Content injected in next steps -->
+        </nav>
+
+        <!-- 2. MAIN CONTENT AREA -->
+        <main id="main-content" class="pt-20 pb-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
+            <!-- Video Feed / Content will be injected here -->
+        </main>
+
+        <!-- 3. BOTTOM NAVIGATION (Mobile Optimized) -->
+        <nav id="bottom-nav" class="fixed bottom-0 w-full bg-slate-900/90 border-t border-slate-800 py-3 px-6 flex justify-between items-center md:hidden z-50">
+            <!-- Icons injected in next steps -->
+        </nav>
+
+        <!-- 4. MODALS (Wallet, Upload, Payment, NFT) -->
+        <div id="modal-container" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+            <!-- Modal content injected in later steps -->
         </div>
 
-        <!-- دکمه اتصال واقعی به متاماسک -->
-        <button id="connectWalletBtn" onclick="connectMetaMask()" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-xs sm:text-sm font-medium px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-blue-600/20 active:scale-95">
-            <i class="fa-solid fa-wallet"></i>
-            <span id="walletButtonText">اتصال به متاماسک</span>
-        </button>
-    </header>
+    </div>
 
-    <!-- بخش اصلی کارت‌ها (Grid Content) -->
-    <main class="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
-
-        <!-- کارت ۱: تلگرام -->
-        <a href="https://t.me/+3zLEkISgqAM0ODRk" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
-            <div>
-                <div class="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-sky-500/20 transition-all border border-sky-500/10">
-                    <i class="fa-brands fa-telegram"></i>
-                </div>
-                <h3 class="text-base font-bold mb-2 group-hover:text-sky-400 transition-colors">کانال تلگرام</h3>
-                <p class="text-xs text-gray-400 leading-relaxed">آخرین اخبار، مقالات تخصصی و اطلاعیه‌های رسمی پایگاه را در کانال تلگرام دنبال کنید.</p>
-            </div>
-            <div class="mt-6 flex items-center gap-2 text-xs text-sky-400 font-medium">
-                <span>ورود به کانال</span>
-                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
-            </div>
-        </a>
-
-        <!-- کارت ۲: اینستاگرام -->
-        <a href="https://www.instagram.com/habib_zirak" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
-            <div>
-                <div class="w-12 h-12 rounded-xl bg-pink-500/10 text-pink-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-pink-500/20 transition-all border border-pink-500/10">
-                    <i class="fa-brands fa-instagram"></i>
-                </div>
-                <h3 class="text-base font-bold mb-2 group-hover:text-pink-400 transition-colors">صفحه اینستاگرام</h3>
-                <p class="text-xs text-gray-400 leading-relaxed">ویدیوهای کوتاه علمی، ریلزها و تصاویر اینفوگرافیک را در صفحه اینستاگرام مشاهده کنید.</p>
-            </div>
-            <div class="mt-6 flex items-center gap-2 text-xs text-pink-400 font-medium">
-                <span>مشاهده پروفایل</span>
-                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
-            </div>
-        </a>
-
-        <!-- کارت ۳: بله -->
-        <a href="https://ble.ir/habib_zirak" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
-            <div>
-                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all border border-emerald-500/10">
-                    <i class="fa-solid fa-comments"></i>
-                </div>
-                <h3 class="text-base font-bold mb-2 group-hover:text-emerald-400 transition-colors">پیام‌رسان بله</h3>
-                <p class="text-xs text-gray-400 leading-relaxed">ارتباط مستقیم، دریافت فایل‌های پژوهشی و گفتگو از طریق کانال پیام‌رسان بله.</p>
-            </div>
-            <div class="mt-6 flex items-center gap-2 text-xs text-emerald-400 font-medium">
-                <span>عضویت در بله</span>
-                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
-            </div>
-        </a>
-
-        <!-- کارت ۴: درگاه پرداخت (Placeholder) -->
-        <a href="#" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
-            <div>
-                <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-amber-500/20 transition-all border border-amber-500/10">
-                    <i class="fa-solid fa-hand-holding-dollar"></i>
-                </div>
-                <h3 class="text-base font-bold mb-2 group-hover:text-amber-400 transition-colors">حمایت مالی</h3>
-                <p class="text-xs text-gray-400 leading-relaxed">کمک به توسعه زیرساخت‌های پژوهشی، ارتقای سرورها و استمرار تولید محتوای علمی.</p>
-            </div>
-            <div class="mt-6 flex items-center gap-2 text-xs text-amber-400 font-medium">
-                <span>حمایت از پروژه</span>
-                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
-            </div>
-        </a>
-
-        <!-- کارت ۵: درباره ما (Placeholder) -->
-        <a href="#" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
-            <div>
-                <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all border border-purple-500/10">
-                    <i class="fa-solid fa-circle-info"></i>
-                </div>
-                <h3 class="text-base font-bold mb-2 group-hover:text-purple-400 transition-colors">درباره پایگاه</h3>
-                <p class="text-xs text-gray-400 leading-relaxed">آشنایی با اهداف، مأموریت‌ها و تیم پژوهشی پایگاه حقیقت علمی در انتشار دانش شفاف.</p>
-            </div>
-            <div class="mt-6 flex items-center gap-2 text-xs text-purple-400 font-medium">
-                <span>مطالعه بیشتر</span>
-                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
-            </div>
-        </a>
-
-        <!-- کارت ۶: ارتباط با ما (Placeholder) -->
-        <a href="#" target="_blank" class="glass-card p-6 rounded-2xl flex flex-col justify-between group">
-            <div>
-                <div class="w-12 h-12 rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xl mb-4 group-hover:scale-110 group-hover:bg-rose-500/20 transition-all border border-rose-500/10">
-                    <i class="fa-solid fa-headset"></i>
-                </div>
-                <h3 class="text-base font-bold mb-2 group-hover:text-rose-400 transition-colors">ارتباط با ما</h3>
-                <p class="text-xs text-gray-400 leading-relaxed">ارسال پیشنهادات، انتقادات، پرسش‌های علمی یا درخواست‌های همکاری از طریق راه‌های ارتباطی.</p>
-            </div>
-            <div class="mt-6 flex items-center gap-2 text-xs text-rose-400 font-medium">
-                <span>ارسال پیام</span>
-                <i class="fa-solid fa-arrow-left-long group-hover:-translate-x-1.5 transition-transform"></i>
-            </div>
-        </a>
-
-    </main>
-
-    <!-- فوتر پایین صفحه -->
-    <footer class="w-full max-w-5xl text-center py-4 border-t border-white/5 text-gray-500 text-xs">
-        <p>© ۲۰۳۰ پایگاه حقیقت علمی. تمامی حقوق محفوظ است. میزبانی شده روی GitHub Pages.</p>
-    </footer>
-
-    <!-- کدهای جاوااسکریپت اتصال به متاماسک -->
+    <!-- CORE SCRIPTS BASE -->
     <script>
-        async function connectMetaMask() {
-            const btnText = document.getElementById('walletButtonText');
-            const btn = document.getElementById('connectWalletBtn');
-            
-            // بررسی وجود افزونه متاماسک یا ولت سازگار در مرورگر
-            if (typeof window.ethereum !== 'undefined') {
-                try {
-                    btnText.innerText = "در حال اتصال...";
-                    
-                    // درخواست دسترسی به حساب‌های کاربری کیف پول
-                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                    const account = accounts[0];
-                    
-                    // کوتاه کردن آدرس کیف پول برای نمایش (مثلاً 0x1234...5678)
-                    const shortAddress = account.substring(0, 6) + '...' + account.substring(account.length - 4);
-                    
-                    // نمایش آدرس روی دکمه و تغییر رنگ به سبز موفقیت‌آمیز
-                    btnText.innerText = shortAddress;
-                    btn.classList.remove('from-blue-600', 'to-indigo-600', 'shadow-blue-600/20');
-                    btn.classList.add('from-emerald-600', 'to-teal-600', 'shadow-emerald-600/20');
-                    
-                    console.log("Wallet Connected Successfully:", account);
-                } catch (error) {
-                    console.error("Connection rejected by user:", error);
-                    btnText.innerText = "اتصال به متاماسک";
-                }
-            } else {
-                alert("افزونه کیف پول متاماسک روی مرورگر شما نصب نشده است. لطفاً ابتدا آن را نصب کنید.");
-                btnText.innerText = "متاماسک یافت نشد";
-            }
-        }
+        // Base Configuration
+        const CONFIG = {
+            projectName: "Archive Pro",
+            language: "fa",
+            isRTL: true,
+            theme: "dark"
+        };
+        
+        console.log("Base System Initialized: " + CONFIG.projectName);
     </script>
 </body>
 </html>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100;400;700&display=swap');
+
+    :root {
+        --glass-bg: rgba(30, 41, 59, 0.7);
+        --glass-border: rgba(255, 255, 255, 0.1);
+        --accent-color: #3b82f6; /* Blue Primary */
+        --nft-gold: #fbbf24;
+    }
+
+    body {
+        font-family: 'Vazirmatn', sans-serif;
+        background: radial-gradient(circle at top center, #1e293b 0%, #020617 100%);
+        scroll-behavior: smooth;
+    }
+
+    /* Glassmorphism Card Effect */
+    .glass-card {
+        background: var(--glass-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--glass-border);
+        border-radius: 1.5rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        border-color: rgba(59, 130, 246, 0.5);
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #020617; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+    /* Video Preview Overlay */
+    .video-overlay {
+        background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, transparent 100%);
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fadeIn 0.5s ease forwards; }
+
+    /* Disable selection/copy for security */
+    .no-select {
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    /* Bottom Nav Mobile Shadow */
+    #bottom-nav {
+        box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+</style>
+<!-- 1. NAVIGATION BAR -->
+<nav id="navbar" class="fixed top-0 w-full z-50 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+                <i class="fas fa-microchip text-white text-xl"></i>
+            </div>
+            <span class="text-xl font-bold tracking-tight hidden md:block">پایگاه حقیقت علمی</span>
+        </div>
+
+        <!-- Search Bar (Desktop) -->
+        <div class="hidden md:flex flex-1 max-w-md mx-8">
+            <div class="relative w-full">
+                <input type="text" placeholder="جستجو در ویدئوها و NFTها..." class="w-full bg-slate-900 border border-slate-700 rounded-full py-2 px-10 focus:outline-none focus:border-blue-500 transition-all text-sm">
+                <i class="fas fa-search absolute right-4 top-3 text-slate-500 text-sm"></i>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button id="btn-upload" class="p-2 text-slate-400 hover:text-blue-400 transition-colors md:hidden">
+                <i class="fas fa-plus-circle text-2xl"></i>
+            </button>
+            <button id="btn-connect" class="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-full text-sm font-bold transition-all shadow-lg shadow-blue-600/20">
+                <i class="fas fa-wallet ml-2"></i> اتصال کیف پول
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- 2. MAIN CONTENT (Video Feed Area) -->
+<main id="main-content" class="pt-24 pb-24 px-4 md:px-8 max-w-7xl mx-auto w-full">
+    <!-- Dynamic Content Area: Where JS will render video cards -->
+    <div id="video-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Skeleton Loading or Initial Cards will go here -->
+    </div>
+</main>
+
+<!-- 3. BOTTOM NAVIGATION (Mobile Only) -->
+<nav id="bottom-nav" class="fixed bottom-0 w-full bg-slate-900/95 border-t border-slate-800 py-3 px-8 flex justify-between items-center md:hidden z-50">
+    <button class="flex flex-col items-center text-blue-500">
+        <i class="fas fa-home text-xl"></i>
+        <span class="text-[10px] mt-1">خانه</span>
+    </button>
+    <button class="flex flex-col items-center text-slate-400 hover:text-white">
+        <i class="fas fa-compass text-xl"></i>
+        <span class="text-[10px] mt-1">اکتشاف</span>
+    </button>
+    <button id="mobile-upload-trigger" class="flex flex-col items-center -mt-8">
+        <div class="w-14 h-14 bg-blue-600 rounded-full flex items-center justify-center shadow-xl border-4 border-slate-950">
+            <i class="fas fa-plus text-white text-2xl"></i>
+        </div>
+        <span class="text-[10px] mt-1 text-slate-400">آپلود</span>
+    </button>
+    <button class="flex flex-col items-center text-slate-400 hover:text-white">
+        <i class="fas fa-heart text-xl"></i>
+        <span class="text-[10px] mt-1">لایک‌ها</span>
+    </button>
+    <button class="flex flex-col items-center text-slate-400 hover:text-white">
+        <i class="fas fa-user text-xl"></i>
+        <span class="text-[10px] mt-1">پروفایل</span>
+    </button>
+</nav>
+
+<!-- 4. MODAL CONTAINER -->
+<div id="modal-container" class="fixed inset-0 z-[60] hidden flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
+    <div id="modal-content" class="glass-card w-full max-w-lg p-6 relative">
+        <!-- Dynamic Modal Content -->
+    </div>
+</div>
+<script>
+/**
+ * CORE WEB3 & APP LOGIC
+ * Developed for Archive Pro
+ */
+
+// State Management
+const state = {
+    account: null,
+    chainId: null,
+    isWalletConnected: false,
+    videos: [], // Array to hold video objects
+    userProfile: null
+};
+
+// Constants
+const UI = {
+    btnConnect: document.getElementById('btn-connect'),
+    videoGrid: document.getElementById('video-grid'),
+    modalContainer: document.getElementById('modal-container'),
+    modalContent: document.getElementById('modal-content')
+};
+
+/**
+ * WEB3 INTEGRATION
+ */
+async function connectWallet() {
+    if (typeof window.ethereum !== 'undefined') {
+        try {
+            // Request account access
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            state.account = accounts[0];
+            state.isWalletConnected = true;
+
+            // Update UI
+            UI.btnConnect.innerHTML = `<i class="fas fa-check-circle ml-2"></i> ${state.account.substring(0,6)}...${state.account.substring(38)}`;
+            UI.btnConnect.classList.replace('bg-blue-600', 'bg-green-600');
+            
+            console.log("Wallet Connected:", state.account);
+            showToast("با موفقیت متصل شد!");
+            
+            // Trigger content refresh
+            renderVideos();
+            
+        } catch (error) {
+            console.error("Connection failed", error);
+            showToast("خطا در اتصال به کیف پول");
+        }
+    } else {
+        showToast("MetaMask یافت نشد! لطفاً افزونه را نصب کنید.");
+    }
+}
+
+/**
+ * UTILITIES
+ */
+function showToast(message) {
+    // Simple toast implementation
+    const toast = document.createElement('div');
+    toast.className = "fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl z-[100] animate-fade-in border border-slate-700";
+    toast.innerText = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+
+// Event Listeners
+UI.btnConnect.addEventListener('click', connectWallet);
+
+// Initializing App
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("Archive Pro Initialized...");
+    // Initial render or skeleton loading
+    renderVideos();
+});
+</script>
+/**
+ * VIDEO & NFT RENDERING ENGINE
+ */
+
+// Simulated Data (In production, this comes from IPFS/Database)
+const MOCK_VIDEOS = [
+    {
+        id: 1,
+        title: "تحلیل تکنولوژی‌های Web3 در سال ۲۰۲۶",
+        creator: "0x71C...a4E2",
+        thumbnail: "https://images.unsplash.com/photo-1639762681485-074b8cb7307c?auto=format&fit=crop&w=800&q=80",
+        isGated: true,
+        price: "5 USDT",
+        isNFT: true,
+        views: "1.2k"
+    },
+    {
+        id: 2,
+        title: "آموزش مقدماتی هوش مصنوعی در بلاکچین",
+        creator: "0x3A2...b91F",
+        thumbnail: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80",
+        isGated: false,
+        price: "Free",
+        isNFT: false,
+        views: "850"
+    },
+    {
+        id: 3,
+        title: "آینده NFTها و مالکیت دیجیتال",
+        creator: "0x991...c21D",
+        thumbnail: "https://images.unsplash.com/photo-1642104704074-907c0698bae9?auto=format&fit=crop&w=800&q=80",
+        isGated: true,
+        price: "12 USDT",
+        isNFT: true,
+        views: "430"
+    }
+];
+
+function renderVideos() {
+    UI.videoGrid.innerHTML = ''; // Clear current grid
+    
+    MOCK_VIDEOS.forEach(video => {
+        const card = document.createElement('div');
+        card.className = "glass-card overflow-hidden animate-fade-in group cursor-pointer";
+        card.innerHTML = `
+            <div class="relative aspect-video overflow-hidden">
+                <img src="${video.thumbnail}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                
+                <!-- Gated/NFT Badge -->
+                ${video.isNFT ? '<span class="absolute top-3 right-3 bg-amber-500 text-black text-[10px] font-bold px-2 py-1 rounded-md shadow-lg"><i class="fas fa-gem ml-1"></i> NFT</span>' : ''}
+                ${video.isGated ? '<span class="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white text-[10px] px-2 py-1 rounded-md"><i class="fas fa-lock ml-1"></i> Pay-to-View</span>' : ''}
+                
+                <!-- Play Icon Overlay -->
+                <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
+                    <i class="fas fa-play text-white text-4xl"></i>
+                </div>
+
+                <div class="video-overlay absolute inset-0 pointer-events-none"></div>
+            </div>
+
+            <div class="p-4">
+                <h3 class="font-bold text-slate-100 line-clamp-1 mb-2">${video.title}</h3>
+                <div class="flex items-center justify-between text-xs text-slate-400">
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 bg-slate-700 rounded-full flex items-center justify-center text-[10px] text-white">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <span>${video.creator}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span><i class="fas fa-eye ml-1"></i> ${video.views}</span>
+                        <span class="text-blue-400 font-bold">${video.price}</span>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="mt-4 flex gap-4 border-t border-slate-800 pt-3">
+                    <button class="text-slate-400 hover:text-red-500 transition-colors"><i class="far fa-heart"></i></button>
+                    <button class="text-slate-400 hover:text-blue-500 transition-colors"><i class="far fa-comment"></i></button>
+                    <button class="text-slate-400 hover:text-green-500 transition-colors ml-auto"><i class="fas fa-share-alt"></i></button>
+                </div>
+            </div>
+        `;
+        
+        card.onclick = () => handleVideoClick(video);
+        UI.videoGrid.appendChild(card);
+    });
+}
+
+function handleVideoClick(video) {
+    if (video.isGated) {
+        openPaymentModal(video);
+    } else {
+        showToast("در حال بارگذاری ویدئو...");
+        // Logic for playing free video
+    }
+}
+/**
+ * UPLOAD & PAYMENT LOGIC
+ */
+
+function openPaymentModal(video) {
+    UI.modalContainer.classList.remove('hidden');
+    UI.modalContent.innerHTML = `
+        <button onclick="closeModal()" class="absolute top-4 left-4 text-slate-400 hover:text-white text-xl">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <div class="text-center">
+            <div class="w-16 h-16 bg-blue-600/20 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                <i class="fas fa-shield-alt"></i>
+            </div>
+            <h2 class="text-xl font-bold mb-2">دسترسی محدود به محتوا</h2>
+            <p class="text-slate-400 text-sm mb-6">برای تماشای کامل این ویدئو، لطفاً مبلغ ${video.price} را به آدرس زیر واریز کنید.</p>
+            
+            <!-- Crypto Address Card -->
+            <div class="bg-slate-900 rounded-xl p-4 mb-6 border border-slate-700 text-right" dir="ltr">
+                <p class="text-[10px] text-slate-500 mb-1 uppercase tracking-widest font-bold">USDT (TRC20/ERC20) Address</p>
+                <div class="flex items-center justify-between gap-2">
+                    <span class="text-blue-400 text-sm font-mono break-all">0x71C7656EC7ab88b098defB751B7401B5f6d8976F</span>
+                    <button onclick="copyToClipboard('0x71C7656EC7ab88b098defB751B7401B5f6d8976F')" class="text-slate-400 hover:text-white">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-3">
+                <button onclick="confirmPayment()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold transition-all">
+                    من تراکنش را انجام دادم
+                </button>
+                <button onclick="closeModal()" class="w-full bg-slate-800 hover:bg-slate-700 py-3 rounded-xl font-bold transition-all">
+                    انصراف
+                </button>
+            </div>
+            <p class="text-[10px] text-slate-500 mt-4 italic font-light text-center">پس از واریز، رسید خود را از طریق پنل پشتیبانی ارسال کنید.</p>
+        </div>
+    `;
+}
+
+function openUploadModal() {
+    UI.modalContainer.classList.remove('hidden');
+    UI.modalContent.innerHTML = `
+        <button onclick="closeModal()" class="absolute top-4 left-4 text-slate-400 hover:text-white text-xl">
+            <i class="fas fa-times"></i>
+        </button>
+        
+        <h2 class="text-xl font-bold mb-6 text-center">آپلود محتوای جدید</h2>
+        
+        <form id="upload-form" class="space-y-4">
+            <div>
+                <label class="block text-sm text-slate-400 mb-2">عنوان ویدئو</label>
+                <input type="text" required class="w-full bg-slate-900 border border-slate-700 rounded-xl py-3 px-4 focus:outline-none focus:border-blue-500">
+            </div>
+            
+            <div>
+                <label class="block text-sm text-slate-400 mb-2">انتخاب فایل (MP4/WebM)</label>
+                <div class="border-2 border-dashed border-slate-700 rounded-xl p-8 text-center hover:border-blue-500 transition-colors cursor-pointer">
+                    <i class="fas fa-cloud-upload-alt text-3xl text-slate-500 mb-2"></i>
+                    <p class="text-xs text-slate-500">فایل را اینجا بکشید یا کلیک کنید</p>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between py-2">
+                <span class="text-sm text-slate-400">تبدیل به NFT</span>
+                <input type="checkbox" class="w-5 h-5 accent-blue-600">
+            </div>
+
+            <div class="flex items-center justify-between py-2">
+                <span class="text-sm text-slate-400">محتوای پولی (Gated)</span>
+                <input type="checkbox" id="is-gated-check" class="w-5 h-5 accent-blue-600">
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded-xl font-bold mt-4">
+                ثبت و ارسال برای بررسی
+            </button>
+        </form>
+    `;
+}
+
+// Global Helper Functions
+function closeModal() {
+    UI.modalContainer.classList.add('hidden');
+}
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+    showToast("آدرس کپی شد!");
+}
+
+function confirmPayment() {
+    showToast("درخواست تایید رسید ارسال شد. منتظر بررسی ادمین باشید.");
+    closeModal();
+}
+
+// Link Upload Triggers
+document.getElementById('btn-upload').addEventListener('click', openUploadModal);
+document.getElementById('mobile-upload-trigger').addEventListener('click', openUploadModal);
+
+// Form Submission (Simulated)
+document.addEventListener('submit', (e) => {
+    if(e.target.id === 'upload-form') {
+        e.preventDefault();
+        showToast("ویدئو با موفقیت برای بررسی ارسال شد (در حالت شبیه‌سازی)");
+        closeModal();
+    }
+});
+
+// Security: Disable Right Click and F12
+document.addEventListener('contextmenu', event => event.preventDefault());
+document.onkeydown = function(e) {
+    if(e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74))) {
+        return false;
+    }
+};
+- `<!DOCTYPE html>`
+   - `<head>` (شامل CSSها)
+   - `<body>
